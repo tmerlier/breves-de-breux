@@ -1,20 +1,12 @@
-<article class="article">
-  <!-- Article title -->
-  <h2 class="article-title"><%= article.title %></h2>
-  
-  <!-- Formatted publication date -->
-  <p class="article-date">
-    Publié le <%= article.date.getDate().toString().padStart(2, '0') %>/<%= (article.date.getMonth() + 1).toString().padStart(2, '0') %>/<%= article.date.getFullYear() %>
-  </p>
-  
-  <!-- Article content with alternating image alignment -->
-  <div class="article-content <%= index % 2 === 0 ? 'article-content-left' : 'article-content-right' %>">
-    <!-- Article image -->
-    <img class="article-image" src="<%= article.img %>" alt="<%= article.alt || 'Image de l\'article' %>">
-    
-    <!-- Article text content -->
-    <div class="article-text">
-      <%- article.content %>
-    </div>
+<div class="article">
+  <h2><%= article.title %></h2>
+  <p><em>Publié le <%= article.date.getDate() %>/<%= article.date.getMonth() + 1 %>/<%= article.date.getFullYear() %></em></p>
+  <% if (article.img) { %>
+    <!-- Image principale affichée en mode habillage texte -->
+    <img src="<%= article.img %>" alt="<%= article.alt %>" class="text-wrap">
+  <% } %>
+  <div class="content">
+    <%- article.content %>
   </div>
-</article>
+  <div class="clear"></div>
+</div>

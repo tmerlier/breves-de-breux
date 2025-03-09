@@ -88,12 +88,27 @@
     .articles-section {
       margin-top: 2rem;
     }
+
+    /* L'image en habillage texte s'affiche à gauche, avec une marge pour que le texte ne colle pas */
+    .text-wrap {
+      float: left;
+      margin: 0 20px 20px 0;
+      max-width: 300px;
+    }
+
+    /* Règle pour les images dans le contenu (autres que l'image principale) */
+    .article .content img {
+      max-width: 240px;
+    }
+
+    .clear { clear: both; }
     
     .article {
       margin-bottom: 3rem;
       padding-bottom: 2rem;
       border-bottom: 1px solid #e2e8f0;
       page-break-inside: avoid;
+      overflow: auto;
     }
     
     .article:last-child {
