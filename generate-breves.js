@@ -42,16 +42,25 @@ files.forEach(filename => {
       return;
     }
     
-    // Préfixer le chemin de l'image si IMAGES_PATH est défini
+    // Préfixer le chemin de l'image principale si IMAGES_PATH est défini
     let imgPath = parsed.data.img;
     if (IMAGES_PATH && imgPath) {
       imgPath = IMAGES_PATH.replace(/\/$/, '') + '/' + imgPath.replace(/^\//, '');
     }
     
+    // Traitement du contenu pour remplacer les src d'images relatives par le préfixe IMAGES_PATH
+    let content = parsed.content;
+    if (IMAGES_PATH) {
+      // Cette regex remplace src="/chemin" par src="IMAGES_PATH/chemin"
+      content = content.replace(/src="\/([^"]+)"/g, (match, p1) => {
+        return `src="${IMAGES_PATH.replace(/\/$/, '')}/${p1}"`;
+      });
+    }
+    
     articles.push({
       title: parsed.data.title,
       date: articleDate,
-      content: parsed.content,
+      content: content, // contenu mis à jour
       img: imgPath,
       alt: parsed.data.alt,
     });
