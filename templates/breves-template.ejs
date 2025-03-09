@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Les Brèves de Breux</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    header { margin-bottom: 40px; }
+    .article { margin-bottom: 40px; overflow: auto; }
+    .article img { max-width: 300px; }
+    .align-left { float: left; margin-right: 20px; }
+    .align-right { float: right; margin-left: 20px; }
+    .clear { clear: both; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Les Brèves de Breux</h1>
+    <h3><%= subtitle %></h3>
+    <h2>Mot du maire</h2>
+    <p><%= mayor_message %></p>
+  </header>
+
+  <% articles.forEach((article, index) => { %>
+  <div class="article">
+    <h2><%= article.title %></h2>
+    <p><em>Publié le <%= article.date.getDate() %>/<%= article.date.getMonth() + 1 %>/<%= article.date.getFullYear() %></em></p>
+    <% if ((index + 1) % 2 === 0) { %>
+      <img src="<%= article.img %>" alt="<%= article.alt %>" class="align-right">
+    <% } else { %>
+      <img src="<%= article.img %>" alt="<%= article.alt %>" class="align-left">
+    <% } %>
+    <div class="content">
+      <%- article.content %>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <% }); %>
+</body>
+</html>

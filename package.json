@@ -1,4 +1,12 @@
 {
   "name": "breves-de-breux",
-  "packageManager": "yarn@4.1.1"
+  "packageManager": "yarn@4.1.1",
+  "scripts": {
+    "generate": "node generate-breves.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "gray-matter": "^4.0.3"
+  }
 }
