@@ -2,39 +2,298 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Les Brèves de Breux</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; }
-    header { margin-bottom: 40px; }
-    .article { margin-bottom: 40px; overflow: auto; }
-    .article img { max-width: 300px; }
-    .align-left { float: left; margin-right: 20px; }
-    .align-right { float: right; margin-left: 20px; }
-    .clear { clear: both; }
+    /* General styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .container {
+      max-width: 210mm; /* A4 width */
+      margin: 0 auto;
+      padding: 20mm;
+    }
+    
+    /* First page / Header styles */
+    .first-page {
+      min-height: 297mm; /* A4 height */
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+    }
+    
+    .newsletter-title {
+      font-size: 3.5rem;
+      font-weight: bold;
+      color: #1a365d;
+      text-align: center;
+      margin-bottom: 1rem;
+      font-family: 'Georgia', serif;
+    }
+    
+    .newsletter-subtitle {
+      font-size: 1.5rem;
+      color: #4a5568;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    
+    .header-image-container {
+      width: 100%;
+      height: 50vh;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+    
+    .header-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    
+    .mayor-section {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background-color: #f8f9fa;
+      border-left: 4px solid #1a365d;
+    }
+    
+    .mayor-title {
+      font-size: 1.8rem;
+      color: #1a365d;
+      margin-bottom: 1rem;
+    }
+    
+    .mayor-message {
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+    
+    /* Articles section styles */
+    .articles-section {
+      margin-top: 2rem;
+    }
+    
+    .article {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #e2e8f0;
+      page-break-inside: avoid;
+    }
+    
+    .article:last-child {
+      border-bottom: none;
+    }
+    
+    .article-title {
+      font-size: 1.8rem;
+      color: #1a365d;
+      margin-bottom: 0.5rem;
+    }
+    
+    .article-date {
+      font-style: italic;
+      color: #718096;
+      margin-bottom: 1rem;
+    }
+    
+    .article-content {
+      display: grid;
+      grid-gap: 1.5rem;
+    }
+    
+    .article-image {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Left alignment for odd articles */
+    .article-content-left {
+      grid-template-columns: minmax(200px, 40%) 1fr;
+    }
+    
+    /* Right alignment for even articles */
+    .article-content-right {
+      grid-template-columns: 1fr minmax(200px, 40%);
+    }
+    
+    .article-content-right .article-image {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    
+    .article-content-right .article-text {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    
+    /* Calendar section styles */
+    .calendar-section {
+      margin-top: 3rem;
+      page-break-before: always;
+    }
+    
+    .calendar-title {
+      font-size: 2.5rem;
+      color: #1a365d;
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #1a365d;
+    }
+    
+    .events-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    
+    .event-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1.5rem;
+      background-color: #f8f9fa;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      page-break-inside: avoid;
+    }
+    
+    .event-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    
+    .event-title {
+      font-size: 1.5rem;
+      color: #1a365d;
+      margin-bottom: 0.5rem;
+    }
+    
+    .event-date {
+      background-color: #1a365d;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      text-align: center;
+      min-width: 100px;
+    }
+    
+    .event-date-day {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    
+    .event-date-month {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+    
+    .event-details {
+      margin-bottom: 1rem;
+    }
+    
+    .event-time, .event-location {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      color: #4a5568;
+    }
+    
+    .event-icon {
+      margin-right: 0.5rem;
+      font-weight: bold;
+    }
+    
+    .event-content {
+      margin-top: 1rem;
+      line-height: 1.6;
+    }
+    
+    /* Print-specific styles */
+    @media print {
+      body {
+        font-size: 12pt;
+      }
+      
+      .container {
+        padding: 0;
+        max-width: 100%;
+      }
+      
+      .article, .event-card {
+        page-break-inside: avoid;
+      }
+      
+      .first-page {
+        height: 100vh;
+      }
+      
+      .calendar-section {
+        page-break-before: always;
+      }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Les Brèves de Breux</h1>
-    <h3><%= subtitle %></h3>
-    <h2>Mot du maire</h2>
-    <p><%= mayor_message %></p>
-  </header>
-
-  <% articles.forEach((article, index) => { %>
-  <div class="article">
-    <h2><%= article.title %></h2>
-    <p><em>Publié le <%= article.date.getDate() %>/<%= article.date.getMonth() + 1 %>/<%= article.date.getFullYear() %></em></p>
-    <% if ((index + 1) % 2 === 0) { %>
-      <img src="<%= article.img %>" alt="<%= article.alt %>" class="align-right">
-    <% } else { %>
-      <img src="<%= article.img %>" alt="<%= article.alt %>" class="align-left">
-    <% } %>
-    <div class="content">
-      <%- article.content %>
-    </div>
-    <div class="clear"></div>
+  <div class="container">
+    <!-- Include the main page component -->
+    <%- include('main-page', { 
+      subtitle: subtitle, 
+      mayor_message: mayor_message, 
+      headerImage: articles && articles.length > 0 ? articles[0].img : null,
+      headerImageAlt: articles && articles.length > 0 ? articles[0].alt : null
+    }) %>
+    
+    <!-- Articles section -->
+    <section class="articles-section">
+      <!-- Loop through each article in the 'articles' array -->
+      <% if (articles && articles.length > 0) { %>
+        <% articles.forEach((article, index) => { %>
+          <%- include('article', { article: article, index: index }) %>
+        <% }); %>
+      <% } else { %>
+        <p>Aucun article disponible pour le moment.</p>
+      <% } %>
+    </section>
+    
+    <!-- Calendar section for upcoming events -->
+    <section class="calendar-section">
+      <h2 class="calendar-title">Calendrier des Événements</h2>
+      
+      <!-- Check if events array exists and has items -->
+      <% if (typeof events !== 'undefined' && events && events.length > 0) { %>
+        <div class="events-container">
+          <% 
+            // Sort events by start date (most recent first)
+            const sortedEvents = [...events].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+          %>
+          
+          <% sortedEvents.forEach(event => { %>
+            <%- include('event', { event: event }) %>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <p style="text-align: center; font-style: italic;">Aucun événement à venir pour le moment.</p>
+      <% } %>
+    </section>
   </div>
-  <% }); %>
 </body>
 </html>

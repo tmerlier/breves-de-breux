@@ -1,0 +1,28 @@
+<!-- First page with header, title, subtitle, image and mayor's message -->
+<section class="first-page">
+    <header>
+      <!-- Newsletter title -->
+      <h1 class="newsletter-title">Les Brèves de Breux</h1>
+      
+      <!-- Subtitle with date range (provided via the 'subtitle' variable) -->
+      <h2 class="newsletter-subtitle"><%= subtitle %></h2>
+    </header>
+    
+    <!-- Main header image -->
+    <div class="header-image-container">
+      <% if (headerImage) { %>
+        <img class="header-image" src="<%= headerImage %>" alt="<%= headerImageAlt || 'Image principale du bulletin' %>">
+      <% } else { %>
+        <img class="header-image" src="https://via.placeholder.com/1200x800?text=Les+Brèves+de+Breux" alt="Image principale du bulletin">
+      <% } %>
+    </div>
+    
+    <!-- Mayor's message section -->
+    <section class="mayor-section">
+      <h2 class="mayor-title">Mot du Maire</h2>
+      <!-- Mayor's message content (provided via the 'mayor_message' variable) -->
+      <div class="mayor-message">
+        <%- mayor_message %>
+      </div>
+    </section>
+  </section>

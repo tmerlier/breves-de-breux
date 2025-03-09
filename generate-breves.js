@@ -10,6 +10,8 @@ const TEMPLATE_DIR = process.env.TEMPLATE_DIR || path.join(__dirname, 'templates
 const TEMPLATE_NAME = process.env.TEMPLATE_NAME || 'breves_template.ejs';
 const OUTPUT_FILE = process.env.OUTPUT_FILE || path.join(__dirname, 'breves.html');
 const IMAGES_PATH = process.env.IMAGES_PATH || '';
+const MAIN_IMAGE = process.env.MAIN_IMAGE || '';       // Image principale pour la page d'accueil
+const EVENTS_PATH = process.env.EVENTS_PATH || '';       // Chemin vers le fichier JSON d'évènements
 
 // Fonction pour parser une date au format "MM-DD-YYYY"
 function parseDate(dateStr) {
@@ -40,7 +42,7 @@ files.forEach(filename => {
       return;
     }
     
-    // Mise à jour du chemin de l'image si IMAGES_PATH est défini
+    // Préfixer le chemin de l'image si IMAGES_PATH est défini
     let imgPath = parsed.data.img;
     if (IMAGES_PATH && imgPath) {
       imgPath = IMAGES_PATH.replace(/\/$/, '') + '/' + imgPath.replace(/^\//, '');
@@ -92,17 +94,35 @@ const formatter = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numer
 const formattedStartDate = formatter.format(startDate);
 const formattedEndDate = formatter.format(endDate);
 
-// Préparation du contexte pour le template EJS, avec le sous-titre indiquant la période
+// Chargement et filtrage des évènements depuis le fichier JSON défini dans EVENTS_PATH
+let events = [];
+if (EVENTS_PATH) {
+  try {
+    const eventsContent = fs.readFileSync(path.join(__dirname, EVENTS_PATH), 'utf8');
+    events = JSON.parse(eventsContent).filter(event => {
+      // Les dates d'évènements sont au format ISO "YYYY-MM-DD", qui peut être directement parsé par new Date()
+      const eventStart = new Date(event.startDate);
+      // Ne récupérer que les évènements dont la date de début est après (ou égale à) endDate (ou aujourd'hui si END_DATE n'est pas défini)
+      return eventStart >= endDate;
+    });
+  } catch (error) {
+    console.error(`Erreur lors de la lecture des évènements depuis ${EVENTS_PATH}: ${error}`);
+  }
+}
+
+// Préparation du contexte pour le template EJS
 const context = {
   mayor_message: process.env.MAYOR_MESSAGE || "À compléter – mot du maire ici.",
   articles: articles,
-  subtitle: `${formattedStartDate} - ${formattedEndDate}`
+  subtitle: `Du ${formattedStartDate} au ${formattedEndDate}`,
+  main_image: MAIN_IMAGE,  // Image principale pour la page d'accueil
+  events: events           // Tableau d'évènements filtré
 };
 
 // Lecture et rendu du template EJS
 const templatePath = path.join(TEMPLATE_DIR, TEMPLATE_NAME);
 const templateContent = fs.readFileSync(templatePath, 'utf8');
-const outputHtml = ejs.render(templateContent, context);
+const outputHtml = ejs.render(templateContent, context, { filename: templatePath });
 
 // Sauvegarde du document généré
 fs.writeFileSync(OUTPUT_FILE, outputHtml, 'utf8');

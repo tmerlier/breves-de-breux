@@ -1,0 +1,50 @@
+<%
+  // Function to format date in French
+  function formatDateFr(dateStr) {
+    const date = new Date(dateStr);
+    const day = date.getDate();
+    
+    // French month names
+    const months = [
+      'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+      'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+    ];
+    const month = months[date.getMonth()];
+    
+    return { day, month };
+  }
+  
+  const startDateFormatted = formatDateFr(event.startDate);
+%>
+
+<div class="event-card">
+  <div class="event-header">
+    <div>
+      <h3 class="event-title"><%= event.title %></h3>
+    </div>
+    <div class="event-date">
+      <div class="event-date-day"><%= startDateFormatted.day %></div>
+      <div class="event-date-month"><%= startDateFormatted.month %></div>
+    </div>
+  </div>
+  
+  <div class="event-details">
+    <div class="event-time">
+      <span class="event-icon">⏰</span>
+      <%= event.startHour %>
+      <% if (event.endHour) { %> - <%= event.endHour %><% } %>
+    </div>
+    
+    <div class="event-location">
+      <span class="event-icon">📍</span>
+      <%= event.address %>
+      <% if (event.completAddress && event.completAddress !== event.address) { %>
+        <br><span style="margin-left: 1.5rem; font-size: 0.9em;"><%= event.completAddress %></span>
+      <% } %>
+    </div>
+  </div>
+  
+  <div class="event-content">
+    <%= event.content %>
+  </div>
+</div>
