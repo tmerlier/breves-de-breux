@@ -2,7 +2,22 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
+
 const ejs = require('ejs');
+
+// ---------------------------------------------
+// Chargement d'un fichier de configuration JSON
+// ---------------------------------------------
+const CONFIG_PATH = process.env.CONFIG_PATH || path.join(__dirname, 'config.json');
+let config = {};
+try {
+  if (fs.existsSync(CONFIG_PATH)) {
+    const configContent = fs.readFileSync(CONFIG_PATH, 'utf8');
+    config = JSON.parse(configContent);
+  }
+} catch (err) {
+  console.warn(`Impossible de lire le fichier de configuration (${CONFIG_PATH}) : ${err.message}`);
+}
 
 // Récupération des variables d'environnement ou valeurs par défaut
 const ARTICLES_DIR = process.env.ARTICLES_DIR || path.join(__dirname, 'articles');
@@ -11,6 +26,10 @@ const TEMPLATE_NAME = process.env.TEMPLATE_NAME || 'breves_template.ejs';
 const OUTPUT_FILE = process.env.OUTPUT_FILE || path.join(__dirname, 'breves.html');
 const IMAGES_PATH = process.env.IMAGES_PATH || '';
 const MAIN_IMAGE = process.env.MAIN_IMAGE || '';       // Image principale pour la page d'accueil
+
+// Si un mainImage est défini dans config.json il a priorité
+const MAIN_IMAGE_FINAL = config.mainImage || MAIN_IMAGE;
+
 const EVENTS_PATH = process.env.EVENTS_PATH || '';       // Chemin vers le fichier JSON d'évènements
 
 // Fonction pour parser une date au format "MM-DD-YYYY"
@@ -48,14 +67,9 @@ files.forEach(filename => {
       imgPath = IMAGES_PATH.replace(/\/$/, '') + '/' + imgPath.replace(/^\//, '');
     }
     
-    // Traitement du contenu pour remplacer les src d'images relatives par le préfixe IMAGES_PATH
-    let content = parsed.content;
-    if (IMAGES_PATH) {
-      // Cette regex remplace src="/chemin" par src="IMAGES_PATH/chemin"
-      content = content.replace(/src="\/([^"]+)"/g, (match, p1) => {
-        return `src="${IMAGES_PATH.replace(/\/$/, '')}/${p1}"`;
-      });
-    }
+    // Supprimer complètement les images du contenu, qu'elles soient en Markdown ou en HTML
+    let content = parsed.content
+      .replace(/<img[^>]*>/g, '');
     
     articles.push({
       title: parsed.data.title,
@@ -70,13 +84,16 @@ files.forEach(filename => {
 // Tri des articles par date croissante
 articles.sort((a, b) => a.date - b.date);
 
-// Détermination des dates de filtrage
+// Détermination des dates de filtrage (priorité au fichier de config, puis aux variables d'environnement)
+let startDateRaw = config.startDate || process.env.START_DATE;
+let endDateRaw   = config.endDate   || process.env.END_DATE;
+
 let startDate;
-if (process.env.START_DATE) {
+if (startDateRaw) {
   try {
-    startDate = parseDate(process.env.START_DATE);
+    startDate = parseDate(startDateRaw);
   } catch (error) {
-    console.error("Erreur lors du parsing de START_DATE, utilisation de la date du plus ancien article.");
+    console.error("Erreur lors du parsing de startDate, utilisation de la date du plus ancien article.");
     startDate = articles.length > 0 ? articles[0].date : new Date();
   }
 } else {
@@ -84,11 +101,11 @@ if (process.env.START_DATE) {
 }
 
 let endDate;
-if (process.env.END_DATE) {
+if (endDateRaw) {
   try {
-    endDate = parseDate(process.env.END_DATE);
+    endDate = parseDate(endDateRaw);
   } catch (error) {
-    console.error("Erreur lors du parsing de END_DATE, utilisation de la date d'aujourd'hui.");
+    console.error("Erreur lors du parsing de endDate, utilisation de la date d'aujourd'hui.");
     endDate = new Date();
   }
 } else {
@@ -121,10 +138,11 @@ if (EVENTS_PATH) {
 
 // Préparation du contexte pour le template EJS
 const context = {
-  mayor_message: process.env.MAYOR_MESSAGE || "À compléter – mot du maire ici.",
+  mayor_message: config.mayorMessage || process.env.MAYOR_MESSAGE || "À compléter – mot du maire ici.",
+  etatCivil: config.etatCivil || null,
   articles: articles,
   subtitle: `Du ${formattedStartDate} au ${formattedEndDate}`,
-  main_image: MAIN_IMAGE,  // Image principale pour la page d'accueil
+  mainImage: MAIN_IMAGE_FINAL,  // Image principale (config > env > vide)
   events: events           // Tableau d'évènements filtré
 };
 

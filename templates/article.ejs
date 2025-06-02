@@ -1,12 +1,24 @@
+
+<%
+  /*  Images en habillage : articles pairs → image à gauche,
+      articles impairs → image à droite                            */
+  const floatClass = (typeof index !== 'undefined' && index % 2 === 1)
+    ? 'text-wrap-right'
+    : 'text-wrap-left';
+%>
+
 <div class="article">
-  <h2><%= article.title %></h2>
-  <p><em>Publié le <%= article.date.getDate() %>/<%= article.date.getMonth() + 1 %>/<%= article.date.getFullYear() %></em></p>
+  <h2 class="article-title"><%= article.title %></h2>
+  <p class="article-date"><em>Publié le <%= article.date.toLocaleDateString('fr-FR') %></em></p>
+
   <% if (article.img) { %>
-    <!-- Image principale affichée en mode habillage texte -->
-    <img src="<%= article.img %>" alt="<%= article.alt %>" class="text-wrap">
+    <img src="<%= article.img %>" alt="<%= article.alt %>" class="article-image <%= floatClass %>">
   <% } %>
-  <div class="content">
+
+  <div class="article-text">
     <%- article.content %>
   </div>
+
+  <!-- Remet le flux normal après l’image flottante -->
   <div class="clear"></div>
 </div>

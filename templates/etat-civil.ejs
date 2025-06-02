@@ -1,0 +1,50 @@
+
+<section class="etat-civil-section">
+  <%
+// Helper pour formater une date "DD-MM-YYYY" → "le 12 janvier 2025"
+  const formatDateFr = (dStr) => {
+    if (!dStr) return '';
+    const [day, month, year] = dStr.split('-').map(Number);
+    const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+    return `le ${day} ${months[month - 1]} ${year}`;
+  };
+  %>
+  <h2 class="etat-civil-title">État civil</h2>
+
+  <% if (etatCivil && (
+        (etatCivil.naissances && etatCivil.naissances.length) ||
+        (etatCivil.deces && etatCivil.deces.length) ||
+        (etatCivil.arrivants && etatCivil.arrivants.length)
+      )) { %>
+
+    <% if (etatCivil.naissances && etatCivil.naissances.length) { %>
+      <h3 class="etat-civil-category"><span class="etat-civil-icon">👶</span>Naissances</h3>
+      <ul class="etat-civil-list">
+        <% etatCivil.naissances.forEach(item => { %>
+          <li><b><%= item.nom %></b> - <%= formatDateFr(item.date) %></li>
+        <% }); %>
+      </ul>
+    <% } %>
+
+    <% if (etatCivil.deces && etatCivil.deces.length) { %>
+      <h3 class="etat-civil-category"><span class="etat-civil-icon">⚰️</span>Décès</h3>
+      <ul class="etat-civil-list">
+        <% etatCivil.deces.forEach(item => { %>
+          <li><b><%= item.nom %></b> - <%= formatDateFr(item.date) %></li>
+        <% }); %>
+      </ul>
+    <% } %>
+
+    <% if (etatCivil.arrivants && etatCivil.arrivants.length) { %>
+      <h3 class="etat-civil-category"><span class="etat-civil-icon">🏡</span>Nouveaux arrivants</h3>
+      <ul class="etat-civil-list">
+        <% etatCivil.arrivants.forEach(item => { %>
+          <li><%= item %></li>
+        <% }); %>
+      </ul>
+    <% } %>
+
+  <% } else { %>
+    <p style="text-align: center; font-style: italic;">Aucune information d'état civil pour le moment.</p>
+  <% } %>
+</section>
