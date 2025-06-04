@@ -141,7 +141,7 @@ const context = {
   mayor_message: config.mayorMessage || process.env.MAYOR_MESSAGE || "À compléter – mot du maire ici.",
   etatCivil: config.etatCivil || null,
   articles: articles,
-  subtitle: `Du ${formattedStartDate} au ${formattedEndDate}`,
+  subtitle: `De ${formattedStartDate} à ${formattedEndDate}`,
   mainImage: MAIN_IMAGE_FINAL,  // Image principale (config > env > vide)
   events: events           // Tableau d'évènements filtré
 };
