@@ -1,9 +1,68 @@
 # breves-de-breux
 
-# Brèves de Breux – Générateur de la gazette bisannuelle
+# Brèves de Breux – Générateur de la gazette bisannuelle
 
-Ce dépôt contient l’outil qui produit **_Les Brèves de Breux_**, le journal papier diffusé deux fois par an par la mairie de Breux‑sur‑Avre (Eure).  
-Le script agrège les actualités publiées sur le site web communal, les événements à venir et d’autres informations (état‑civil, mot du maire…) pour générer automatiquement un livret **A4 prêt à imprimer**.
+[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-green.svg)](https://nodejs.org/)
+[![Yarn](https://img.shields.io/badge/Yarn-4.1.1-blue.svg)](https://yarnpkg.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
+Ce dépôt contient l'outil qui produit **_Les Brèves de Breux_**, le journal papier diffusé deux fois par an par la mairie de Breux‑sur‑Avre (Eure).  
+Le script agrège les actualités publiées sur le site web communal, les événements à venir et d'autres informations (état‑civil, mot du maire…) pour générer automatiquement un livret **A4 prêt à imprimer**.
+
+---
+
+## 🆕 Interface Web (Nouveau !)
+
+Une **interface web intuitive** est maintenant disponible pour configurer et générer facilement la gazette :
+
+```bash
+yarn install
+yarn start
+# Ouvrez http://localhost:3000
+```
+
+👉 **Voir le [Démarrage rapide en 5 minutes](QUICKSTART.md)** pour commencer immédiatement !
+
+### ✨ Fonctionnalités de l'interface :
+- 📅 Sélection de période avec filtrage automatique des articles
+- ✅ Sélection visuelle des articles à inclure
+- 🖼️ Upload et prévisualisation de l'image de couverture
+- ✏️ Édition du mot du maire
+- 📋 Formulaires pour l'état civil (naissances, décès, arrivants)
+- 👁️ Prévisualisation en temps réel du rendu final
+- 🖨️ Génération et impression en un clic
+
+---
+
+## 📚 Documentation complète
+
+| Document | Description |
+|----------|-------------|
+| [QUICKSTART.md](QUICKSTART.md) | 🚀 Démarrage en 5 minutes |
+| [GUIDE-UTILISATION.md](GUIDE-UTILISATION.md) | 📖 Guide d'utilisation détaillé |
+| [API.md](API.md) | 📡 Documentation de l'API REST |
+| [DEPLOYMENT.md](DEPLOYMENT.md) | 🚢 Guide de déploiement |
+| [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | 🔧 Guide de dépannage |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | 🤝 Guide de contribution |
+| [PROJECT-STRUCTURE.md](PROJECT-STRUCTURE.md) | 📂 Structure du projet |
+| [ROADMAP.md](ROADMAP.md) | 🗺️ Feuille de route |
+| [CHANGELOG.md](CHANGELOG.md) | 📝 Historique des versions |
+
+---
+
+## 📋 Table des matières
+
+- [Installation](#-installation)
+- [Utilisation rapide](#-utilisation-rapide)
+- [Interface web](#-interface-web)
+- [Script CLI original](#-script-cli-original)
+- [Structure du projet](#-structure-du-projet)
+- [Technologies](#-technologies)
+- [Contribution](#-contribution)
+- [Licence](#-licence)
+
+---
 
 ---
 
@@ -65,13 +124,13 @@ Plusieurs paramètres peuvent être fournis de **trois manières** :
   // Bloc État‑civil (optionnel)
   "etatCivil": {
     "naissances": [
-      { "prenom": "Lou",  "nom": "Martin", "date": "2025‑02‑14" }
-    ],
-    "mariages": [
-      { "prenom1": "Anna", "nom1": "Durand", "prenom2": "Léo", "nom2": "Petit", "date": "2025‑04‑22" }
+      { "nom": "Prénom NOM", "date": "02-14-2025" }
     ],
     "deces": [
-      { "prenom": "René", "nom": "Bernard", "date": "2025‑03‑03" }
+      { "nom": "Madame Prénom NOM", "date": "03-03-2025" }
+    ],
+    "arrivants": [
+      "Monsieur et Madame DUPONT à la Haute-Folie"
     ]
   }
 }
@@ -167,7 +226,7 @@ Les fichiers EJS se trouvent dans `templates/` :
 | `main-page.ejs` | première page (titre, couverture, mot du maire) |
 | `article.ejs` | mise en page d’un article |
 | `event.ejs` | vignette d’événement |
-| `etat-civil.ejs` | registre des naissances/mariages/décès |
+| `etat-civil.ejs` | registre des naissances/décès/arrivants |
 
 La mise en page (CSS inline dans le `<style>`) est ajustable ; n’oubliez pas de **tester le rendu PDF** après modification.
 
@@ -179,9 +238,59 @@ La mise en page (CSS inline dans le `<style>`) est ajustable ; n’oubliez pas
 breves-de-breux/
 ├── articles/            # Markdown source des articles
 ├── templates/           # Fichiers EJS (partials + template principal)
-├── images/              # Ressources illustratives (optionnel)
+├── public/              # Interface web (nouveau)
+├── uploads/             # Images uploadées (nouveau)
 ├── events.json          # Événements futurs (optionnel)
 ├── config.json          # Configuration locale (optionnel)
-├── generate-breves.js   # Script de génération
+├── server.js            # Serveur Express (nouveau)
+├── generate-breves.js   # Script de génération CLI
 └── breves.html          # Sortie générée
 ```
+
+---
+
+## 🚀 Utilisation rapide
+
+### Interface Web (recommandé)
+
+```bash
+yarn start
+# Ouvrez http://localhost:3000
+```
+
+### Script CLI (original)
+
+```bash
+yarn generate
+```
+
+---
+
+## 🛠️ Technologies
+
+- **Backend** : Node.js, Express, EJS
+- **Frontend** : HTML5, CSS3, JavaScript ES6+
+- **Outils** : Yarn 4, Multer, Gray-matter
+
+---
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! Consultez [CONTRIBUTING.md](CONTRIBUTING.md) pour les guidelines.
+
+---
+
+## 📜 Licence
+
+MIT © 2025 Brèves de Breux. Voir [LICENSE](LICENSE) pour plus de détails.
+
+---
+
+## 📞 Support
+
+- **Issues** : [GitHub Issues](https://github.com/tmerlier/breves-de-breux/issues)
+- **Documentation** : Consultez les fichiers `.md` dans le dépôt
+
+---
+
+**Fait avec ❤️ pour la commune de Breux-sur-Avre**

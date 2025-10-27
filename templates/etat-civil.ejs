@@ -1,10 +1,10 @@
 
 <section class="etat-civil-section">
   <%
-// Helper pour formater une date "DD-MM-YYYY" → "le 12 janvier 2025"
+// Helper pour formater une date "MM-DD-YYYY" → "le 12 janvier 2025"
   const formatDateFr = (dStr) => {
     if (!dStr) return '';
-    const [day, month, year] = dStr.split('-').map(Number);
+    const [month, day, year] = dStr.split('-').map(Number);
     const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
     return `le ${day} ${months[month - 1]} ${year}`;
   };
