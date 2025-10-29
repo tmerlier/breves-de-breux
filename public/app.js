@@ -163,11 +163,13 @@ function renderArticlesList() {
       year: 'numeric'
     });
     
+    const draftBadge = isDraft ? '<span class="draft-badge">Brouillon</span>' : '';
+    
     return `
-      <div class="article-item ${checked ? 'selected' : ''}" onclick="toggleArticle('${article.id}')">
+      <div class="article-item ${checked ? 'selected' : ''} ${isDraft ? 'draft' : ''}" onclick="toggleArticle('${article.id}')">
         <input type="checkbox" ${checked ? 'checked' : ''} onclick="event.stopPropagation(); toggleArticle('${article.id}')">
         <div class="article-info">
-          <div class="article-title">${article.title}${isDraft ? ' (brouillon)' : ''}</div>
+          <div class="article-title">${article.title} ${draftBadge}</div>
           <div class="article-date">${dateFormatted}</div>
         </div>
       </div>
