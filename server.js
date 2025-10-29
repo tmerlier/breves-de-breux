@@ -217,6 +217,32 @@ app.post('/api/config', (req, res) => {
   }
 });
 
+// API: Sauvegarder l'état du formulaire
+app.post('/api/save-form-state', (req, res) => {
+  try {
+    const formStatePath = path.join(__dirname, 'form-state.json');
+    fs.writeFileSync(formStatePath, JSON.stringify(req.body, null, 4), 'utf8');
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// API: Récupérer l'état du formulaire
+app.get('/api/form-state', (req, res) => {
+  try {
+    const formStatePath = path.join(__dirname, 'form-state.json');
+    if (fs.existsSync(formStatePath)) {
+      const formStateContent = fs.readFileSync(formStatePath, 'utf8');
+      res.json(JSON.parse(formStateContent));
+    } else {
+      res.json(null);
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // API: Upload d'image
 app.post('/api/upload', upload.single('image'), (req, res) => {
   try {

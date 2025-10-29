@@ -18,6 +18,7 @@ let state = {
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', async () => {
   await loadConfig(); // Charger d'abord la config pour avoir les dates
+  await loadFormState(); // Charger l'état du formulaire sauvegardé
   await loadArticles(); // Puis charger les articles avec les bonnes dates
   
   // Message initial dans l'iframe
@@ -97,6 +98,70 @@ async function loadConfig() {
     }
   } catch (error) {
     console.error('Erreur chargement config:', error);
+  }
+}
+
+// Charger l'état du formulaire sauvegardé
+async function loadFormState() {
+  try {
+    const response = await fetch('/api/form-state');
+    const formState = await response.json();
+    
+    if (!formState) {
+      return; // Pas d'état sauvegardé
+    }
+    
+    // Restaurer la configuration
+    if (formState.config) {
+      state.config = formState.config;
+      
+      // Remplir les champs (écrase les valeurs de loadConfig)
+      if (formState.config.startDate) {
+        document.getElementById('startDate').value = convertToInputDate(formState.config.startDate);
+      }
+      if (formState.config.endDate) {
+        document.getElementById('endDate').value = convertToInputDate(formState.config.endDate);
+      }
+      if (formState.config.mainImage) {
+        document.getElementById('mainImageUrl').value = formState.config.mainImage;
+        updateMainImagePreview();
+      }
+      if (formState.config.mayorMessage) {
+        document.getElementById('mayorMessage').value = formState.config.mayorMessage;
+      }
+      
+      // Effacer l'état civil précédent et recharger
+      document.getElementById('naissancesList').innerHTML = '';
+      document.getElementById('decesList').innerHTML = '';
+      document.getElementById('arrivantsList').innerHTML = '';
+      
+      if (formState.config.etatCivil) {
+        if (formState.config.etatCivil.naissances) {
+          formState.config.etatCivil.naissances.forEach(naissance => {
+            addNaissance(naissance.nom, naissance.date);
+          });
+        }
+        if (formState.config.etatCivil.deces) {
+          formState.config.etatCivil.deces.forEach(deces => {
+            addDeces(deces.nom, deces.date);
+          });
+        }
+        if (formState.config.etatCivil.arrivants) {
+          formState.config.etatCivil.arrivants.forEach(arrivant => {
+            addArrivant(arrivant);
+          });
+        }
+      }
+    }
+    
+    // Restaurer les articles sélectionnés
+    if (formState.selectedArticleIds) {
+      state.selectedArticleIds = new Set(formState.selectedArticleIds);
+    }
+    
+    console.log('État du formulaire restauré avec succès');
+  } catch (error) {
+    console.error('Erreur chargement état du formulaire:', error);
   }
 }
 
@@ -434,6 +499,19 @@ async function generateFinal() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(config)
+    });
+    
+    // Sauvegarder l'état du formulaire (champs remplis + articles sélectionnés)
+    const formState = {
+      config: config,
+      selectedArticleIds: Array.from(state.selectedArticleIds),
+      timestamp: new Date().toISOString()
+    };
+    
+    await fetch('/api/save-form-state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formState)
     });
     
     // Générer le fichier
