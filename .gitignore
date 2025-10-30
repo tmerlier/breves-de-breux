@@ -147,3 +147,7 @@ config.json
 
 # Environnement variables
 .env
+
+# Rappels data
+rappels.json
+form-state.json
