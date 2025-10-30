@@ -9,12 +9,24 @@ const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+// Normalisation IMAGES_PATH: si c'est un chemin filesystem absolu on le remplace par '/images'
+if (process.env.IMAGES_PATH && !/^(https?:)?\/\//.test(process.env.IMAGES_PATH) && path.isAbsolute(process.env.IMAGES_PATH)) {
+  process.env.IMAGES_PATH = '/images';
+}
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
+// Montage des images externes du site Breux-sur-Avre si le dossier existe
+const externalImagesPath = path.resolve(__dirname, '../breux-sur-avre/public/images');
+if (fs.existsSync(externalImagesPath)) {
+  app.use('/images', express.static(externalImagesPath));
+  console.log('📷 Dossier images monté sur /images depuis', externalImagesPath);
+} else {
+  console.warn('⚠️ Dossier images externe introuvable :', externalImagesPath);
+}
 
 // Configuration multer pour l'upload d'images
 const storage = multer.diskStorage({
@@ -106,8 +118,10 @@ app.get('/api/articles', (req, res) => {
     const { startDate, endDate } = req.query;
     const ARTICLES_DIR = process.env.ARTICLES_DIR || path.join(__dirname, 'articles');
     const articlesPath = path.isAbsolute(ARTICLES_DIR) ? ARTICLES_DIR : path.join(__dirname, ARTICLES_DIR);
+    console.log('📄 Chargement articles depuis', articlesPath);
     
     if (!fs.existsSync(articlesPath)) {
+      console.warn('⚠️ Dossier articles introuvable:', articlesPath);
       return res.json([]);
     }
 
@@ -117,6 +131,10 @@ app.get('/api/articles', (req, res) => {
     files.forEach(filename => {
       if (filename.endsWith('.md')) {
         const filepath = path.join(articlesPath, filename);
+        if (!fs.existsSync(filepath)) {
+          console.warn('Fichier manquant', filepath);
+          return;
+        }
         const fileContent = fs.readFileSync(filepath, 'utf8');
         const parsed = matter(fileContent);
 
@@ -129,11 +147,28 @@ app.get('/api/articles', (req, res) => {
           return;
         }
 
-        // Préfixer le chemin de l'image avec IMAGES_PATH si défini
+        // Préfixage intelligent des chemins d'images
         let imgPath = parsed.data.img;
         const IMAGES_PATH = process.env.IMAGES_PATH;
         if (IMAGES_PATH && imgPath) {
-          imgPath = IMAGES_PATH.replace(/\/$/, '') + '/' + imgPath.replace(/^\//, '');
+          const imagesMount = IMAGES_PATH.replace(/\/$/, '');
+          const isExternalImage = /^(https?:)?\/\//i.test(imgPath);
+          const isImagesPathExternal = /^(https?:)?\/\//i.test(imagesMount);
+          if (isExternalImage) {
+            // URL externe déjà complète: ne pas toucher
+          } else if (isImagesPathExternal) {
+            // IMAGES_PATH est une URL externe, construire URL complète
+            imgPath = imagesMount + '/' + imgPath.replace(/^\//, '');
+          } else {
+            // IMAGES_PATH est une route locale (ex /images)
+            if (!imgPath.startsWith(imagesMount)) {
+              if (imgPath.startsWith('/')) {
+                imgPath = imagesMount + imgPath; // /blog/a.png -> /images/blog/a.png
+              } else {
+                imgPath = imagesMount + '/' + imgPath;
+              }
+            }
+          }
         }
 
         articles.push({
@@ -148,6 +183,7 @@ app.get('/api/articles', (req, res) => {
         });
       }
     });
+    console.log('✅ Articles trouvés:', articles.length);
 
     // Tri par date croissante
     articles.sort((a, b) => a.date - b.date);
