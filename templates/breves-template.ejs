@@ -270,6 +270,50 @@
 
     .event-content { font-size: 0.7rem; margin-top: 0.25rem; line-height: 1.3; }
     
+    /* Rappels section styles */
+    .rappels-section {
+      margin-top: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .rappels-title {
+      font-size: 1.6rem;
+      color: #1a365d;
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #1a365d;
+    }
+
+    .rappels-container {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .rappel-card {
+      background-color: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 6px;
+      page-break-inside: avoid;
+      /* Force background color to be printed */
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .rappel-title {
+      font-size: 1.1rem;
+      color: #1a365d;
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+    }
+
+    .rappel-content {
+      line-height: 1.5;
+      white-space: pre-line;
+      color: #4a5568;
+    }
+
     /* Civil status section styles */
     .etat-civil-section {
       margin-top: 3rem;
@@ -350,6 +394,21 @@
         <p>Aucun article disponible pour le moment.</p>
       <% } %>
     </section>
+
+    <!-- Rappels section -->
+    <% if (typeof rappels !== 'undefined' && rappels && rappels.length > 0) { %>
+      <section class="rappels-section">
+        <h2 class="rappels-title">📌 Rappels</h2>
+        <div class="rappels-container">
+          <% rappels.forEach(rappel => { %>
+            <div class="rappel-card">
+              <h3 class="rappel-title"><%= rappel.titre %></h3>
+              <div class="rappel-content"><%= rappel.contenu %></div>
+            </div>
+          <% }); %>
+        </div>
+      </section>
+    <% } %>
 
     <!-- Calendar section for upcoming events -->
     <section class="calendar-section">

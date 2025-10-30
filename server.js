@@ -189,7 +189,8 @@ app.get('/api/config', (req, res) => {
           naissances: [],
           deces: [],
           arrivants: []
-        }
+        },
+        rappels: []
       };
     }
     
@@ -198,6 +199,11 @@ app.get('/api/config', (req, res) => {
       const defaultDates = getDefaultDates();
       config.startDate = config.startDate || defaultDates.startDate;
       config.endDate = config.endDate || defaultDates.endDate;
+    }
+    
+    // S'assurer que rappels existe toujours
+    if (!config.rappels) {
+      config.rappels = [];
     }
     
     res.json(config);
@@ -288,7 +294,8 @@ app.post('/api/preview', (req, res) => {
       articles: articles,
       subtitle: `De ${formattedStartDate} à ${formattedEndDate}`,
       mainImage: config.mainImage || '',
-      events: events
+      events: events,
+      rappels: config.rappels || []
     };
 
     // Rendu du template
@@ -334,7 +341,8 @@ app.post('/api/generate', (req, res) => {
       articles: articles,
       subtitle: `De ${formattedStartDate} à ${formattedEndDate}`,
       mainImage: config.mainImage || '',
-      events: events
+      events: events,
+      rappels: config.rappels || []
     };
 
     const templatePath = path.join(TEMPLATE_DIR, TEMPLATE_NAME);

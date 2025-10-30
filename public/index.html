@@ -257,6 +257,37 @@
       font-size: 0.85rem;
     }
 
+    /* Rappels items */
+    .rappel-item {
+      margin-bottom: 15px;
+      padding: 15px;
+      background-color: #f9fafb;
+      border-radius: 5px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .rappel-item input[type="text"] {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .rappel-item textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      min-height: 80px;
+      resize: vertical;
+      font-family: inherit;
+      margin-bottom: 8px;
+    }
+
     .btn-remove {
       padding: 6px 12px;
       background-color: #ef4444;
@@ -454,6 +485,16 @@
         <h2>🏡 Nouveaux arrivants</h2>
         <div class="etat-civil-items" id="arrivantsList"></div>
         <button class="btn-add" onclick="addArrivant()">+ Ajouter un arrivant</button>
+      </div>
+
+      <!-- Rappels -->
+      <div class="sidebar-section">
+        <h2>📌 Rappels</h2>
+        <div class="info-message">
+          Ajoutez des rappels importants qui apparaîtront après les articles (consignes, informations pratiques, etc.).
+        </div>
+        <div id="rappelsList"></div>
+        <button class="btn-add" onclick="addRappel()">+ Ajouter un rappel</button>
       </div>
     </div>
 

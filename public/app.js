@@ -9,7 +9,8 @@ let state = {
       naissances: [],
       deces: [],
       arrivants: []
-    }
+    },
+    rappels: []
   },
   articles: [],
   selectedArticleIds: new Set()
@@ -96,6 +97,18 @@ async function loadConfig() {
         });
       }
     }
+    
+    // Rappels
+    if (config.rappels) {
+      config.rappels.forEach(rappel => {
+        addRappel(rappel.titre, rappel.contenu);
+      });
+    }
+    
+    // S'assurer que rappels existe dans state.config
+    if (!state.config.rappels) {
+      state.config.rappels = [];
+    }
   } catch (error) {
     console.error('Erreur chargement config:', error);
   }
@@ -151,6 +164,19 @@ async function loadFormState() {
             addArrivant(arrivant);
           });
         }
+      }
+      
+      // Effacer et recharger les rappels
+      document.getElementById('rappelsList').innerHTML = '';
+      if (formState.config.rappels && formState.config.rappels.length > 0) {
+        formState.config.rappels.forEach(rappel => {
+          addRappel(rappel.titre, rappel.contenu);
+        });
+      }
+      
+      // S'assurer que rappels existe dans state.config
+      if (!state.config.rappels) {
+        state.config.rappels = [];
       }
     }
     
@@ -411,14 +437,61 @@ function updateArrivants() {
     .filter(text => text.trim() !== '');
 }
 
+// Ajouter un rappel
+function addRappel(titre = '', contenu = '') {
+  const container = document.getElementById('rappelsList');
+  const id = Date.now();
+  
+  const div = document.createElement('div');
+  div.className = 'rappel-item';
+  div.id = `rappel-${id}`;
+  div.innerHTML = `
+    <input type="text" placeholder="Titre du rappel" value="${titre}" onchange="updateRappels()">
+    <textarea placeholder="Contenu du rappel..." onchange="updateRappels()">${contenu}</textarea>
+    <button class="btn-remove" onclick="removeRappel('${id}')">✕ Supprimer</button>
+  `;
+  
+  container.appendChild(div);
+}
+
+// Supprimer un rappel
+function removeRappel(id) {
+  const element = document.getElementById(`rappel-${id}`);
+  if (element) {
+    element.remove();
+    updateRappels();
+  }
+}
+
+// Mettre à jour les rappels
+function updateRappels() {
+  const container = document.getElementById('rappelsList');
+  const items = container.querySelectorAll('.rappel-item');
+  
+  state.config.rappels = Array.from(items).map(item => {
+    const inputs = item.querySelectorAll('input, textarea');
+    return {
+      titre: inputs[0].value,
+      contenu: inputs[1].value
+    };
+  }).filter(rappel => rappel.titre.trim() !== '' || rappel.contenu.trim() !== '');
+}
+
 // Récupérer la configuration actuelle
 function getCurrentConfig() {
+  // Mettre à jour tous les états avant de retourner la config
+  updateNaissances();
+  updateDeces();
+  updateArrivants();
+  updateRappels();
+  
   return {
     startDate: convertFromInputDate(document.getElementById('startDate').value),
     endDate: convertFromInputDate(document.getElementById('endDate').value),
     mainImage: document.getElementById('mainImageUrl').value,
     mayorMessage: document.getElementById('mayorMessage').value,
-    etatCivil: state.config.etatCivil
+    etatCivil: state.config.etatCivil,
+    rappels: state.config.rappels
   };
 }
 
