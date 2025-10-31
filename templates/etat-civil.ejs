@@ -19,6 +19,7 @@
 
     <% if (etatCivil.naissances && etatCivil.naissances.length) { %>
       <h3 class="etat-civil-category"><span class="etat-civil-icon">👶</span>Naissances</h3>
+      <p class="etat-civil-intro">Nous souhaitons la bienvenue aux nouveau-nés de la commune.</p>
       <ul class="etat-civil-list">
         <% etatCivil.naissances.forEach(item => { %>
           <li><b><%= item.nom %></b> - <%= formatDateFr(item.date) %></li>
@@ -28,6 +29,7 @@
 
     <% if (etatCivil.deces && etatCivil.deces.length) { %>
       <h3 class="etat-civil-category"><span class="etat-civil-icon">⚰️</span>Décès</h3>
+      <p class="etat-civil-intro">Nous présentons nos sincères condoléances aux familles.</p>
       <ul class="etat-civil-list">
         <% etatCivil.deces.forEach(item => { %>
           <li><b><%= item.nom %></b> - <%= formatDateFr(item.date) %></li>
@@ -37,6 +39,7 @@
 
     <% if (etatCivil.arrivants && etatCivil.arrivants.length) { %>
       <h3 class="etat-civil-category"><span class="etat-civil-icon">🏡</span>Nouveaux arrivants</h3>
+      <p class="etat-civil-intro">Nous souhaitons la bienvenue aux nouveaux arrivants.</p>
       <ul class="etat-civil-list">
         <% etatCivil.arrivants.forEach(item => { %>
           <li><%= item %></li>
