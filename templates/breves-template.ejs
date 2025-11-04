@@ -332,19 +332,46 @@
       margin-bottom: 2rem;
       padding-bottom: 0.5rem;
       border-bottom: 2px solid #1a365d;
+    /* Grille pour l'état civil (comme le calendrier) */
+    .etat-civil-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    /* 3 colonnes pour impression ou écrans ≥ 768 px */
+    @media print, (min-width: 768px) {
+      .etat-civil-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .etat-civil-card {
+      background-color: #f8f9fa;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 1.5rem;
+      page-break-inside: avoid;
+      /* Force background color to be printed */
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
 
     .etat-civil-category {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: #1a365d;
-      margin-top: 1.5rem;
-      margin-bottom: 1rem;
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+      border-bottom: 2px solid #1a365d;
+      padding-bottom: 0.5rem;
     }
 
     .etat-civil-intro {
       margin-bottom: 1rem;
       color: #4a5568;
       font-style: italic;
+      font-size: 0.85rem;
     }
 
     .etat-civil-list {
@@ -354,7 +381,9 @@
 
     .etat-civil-list li {
       margin-bottom: 0.5rem;
+      font-size: 0.85rem;
     }
+    
     .etat-civil-icon {
       margin-right: 0.5rem;
     }
