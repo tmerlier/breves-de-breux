@@ -120,8 +120,33 @@
       margin-bottom: 3rem;
       padding-bottom: 2rem;
       border-bottom: 1px solid #e2e8f0;
-      page-break-inside: avoid;
       overflow: auto;
+    }
+    
+    /* Articles courts : éviter les coupures de page */
+    .article.short-article {
+      page-break-inside: avoid;
+    }
+    
+    /* Articles longs : permettre les coupures, mais éviter les orphelins/veuves */
+    .article.long-article {
+      page-break-inside: auto;
+    }
+    
+    .article.long-article .article-text {
+      orphans: 3;
+      widows: 3;
+    }
+    
+    /* Éviter qu'un titre d'article soit seul en bas de page */
+    .article-title {
+      page-break-after: avoid;
+    }
+    
+    /* Éviter qu'une image soit séparée de son article */
+    .article-image {
+      page-break-inside: avoid;
+      page-break-after: avoid;
     }
     
     .article:last-child {
@@ -215,6 +240,7 @@
     .calendar-section {
       margin-top: 2rem;
       page-break-before: always;
+      page-break-inside: avoid;
     }
     
     .calendar-title {
@@ -224,6 +250,7 @@
       margin-bottom: 2rem;
       padding-bottom: 0.5rem;
       border-bottom: 2px solid #1a365d;
+      page-break-after: avoid;
     }
     
     .events-container {
@@ -280,6 +307,7 @@
     .rappels-section {
       margin-top: 3rem;
       margin-bottom: 3rem;
+      page-break-inside: avoid;
     }
 
     .rappels-title {
@@ -289,6 +317,7 @@
       margin-bottom: 2rem;
       padding-bottom: 0.5rem;
       border-bottom: 2px solid #1a365d;
+      page-break-after: avoid;
     }
 
     .rappels-container {
@@ -323,6 +352,7 @@
     /* Civil status section styles */
     .etat-civil-section {
       margin-top: 3rem;
+      page-break-inside: avoid;
     }
 
     .etat-civil-title {
@@ -332,6 +362,9 @@
       margin-bottom: 2rem;
       padding-bottom: 0.5rem;
       border-bottom: 2px solid #1a365d;
+      page-break-after: avoid;
+    }
+
     /* Grille pour l'état civil (comme le calendrier) */
     .etat-civil-grid {
       display: grid;
@@ -445,6 +478,35 @@
       }
     }
   </style>
+  <script>
+    // Détection intelligente des articles courts vs longs pour éviter les pages blanches
+    function optimizeArticleBreaks() {
+      const articles = document.querySelectorAll('.article');
+      
+      articles.forEach(article => {
+        const articleHeight = article.offsetHeight;
+        
+        // Seuil : si l'article fait moins de ~400px de hauteur, on considère qu'il est "court"
+        // et on évite les coupures. Sinon, on autorise les coupures pour éviter les grandes zones blanches.
+        const heightThreshold = 400;
+        
+        if (articleHeight < heightThreshold) {
+          article.classList.add('short-article');
+        } else {
+          article.classList.add('long-article');
+        }
+      });
+    }
+    
+    // Exécuter au chargement ET avant l'impression
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', optimizeArticleBreaks);
+    } else {
+      optimizeArticleBreaks();
+    }
+    
+    window.addEventListener('beforeprint', optimizeArticleBreaks);
+  </script>
 </head>
 <body>
   <div class="container">
@@ -483,6 +545,9 @@
       </section>
     <% } %>
 
+    <!-- Civil status section -->
+    <%- include('etat-civil', { etatCivil: etatCivil }) %>
+    
     <!-- Calendar section for upcoming events -->
     <section class="calendar-section">
       <h2 class="calendar-title">Calendrier des Événements</h2>
@@ -504,9 +569,6 @@
       <% } %>
     </section>
 
-    <!-- Civil status section -->
-    <%- include('etat-civil', { etatCivil: etatCivil }) %>
-    
   </div>
 </body>
 </html>
