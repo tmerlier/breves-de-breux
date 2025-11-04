@@ -16,6 +16,14 @@ let state = {
   selectedArticleIds: new Set()
 };
 
+// Compteurs pour générer des IDs uniques
+let idCounters = {
+  naissance: 0,
+  deces: 0,
+  arrivant: 0,
+  rappel: 0
+};
+
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', async () => {
   await loadConfig(); // Charger d'abord la config pour avoir les dates
@@ -325,7 +333,7 @@ function updateMainImagePreview() {
 // Ajouter une naissance
 function addNaissance(nom = '', date = '') {
   const container = document.getElementById('naissancesList');
-  const id = Date.now();
+  const id = ++idCounters.naissance;
   
   const div = document.createElement('div');
   div.className = 'etat-civil-item';
@@ -333,7 +341,7 @@ function addNaissance(nom = '', date = '') {
   div.innerHTML = `
     <input type="text" placeholder="Nom complet" value="${nom}" onchange="updateNaissances()">
     <input type="date" value="${convertToInputDate(date)}" onchange="updateNaissances()">
-    <button class="btn-remove" onclick="removeNaissance('${id}')">✕</button>
+    <button class="btn-remove" onclick="removeNaissance(${id})">✕</button>
   `;
   
   container.appendChild(div);
@@ -365,7 +373,7 @@ function updateNaissances() {
 // Ajouter un décès
 function addDeces(nom = '', date = '') {
   const container = document.getElementById('decesList');
-  const id = Date.now();
+  const id = ++idCounters.deces;
   
   const div = document.createElement('div');
   div.className = 'etat-civil-item';
@@ -373,7 +381,7 @@ function addDeces(nom = '', date = '') {
   div.innerHTML = `
     <input type="text" placeholder="Nom complet" value="${nom}" onchange="updateDeces()">
     <input type="date" value="${convertToInputDate(date)}" onchange="updateDeces()">
-    <button class="btn-remove" onclick="removeDeces('${id}')">✕</button>
+    <button class="btn-remove" onclick="removeDeces(${id})">✕</button>
   `;
   
   container.appendChild(div);
@@ -405,14 +413,14 @@ function updateDeces() {
 // Ajouter un arrivant
 function addArrivant(text = '') {
   const container = document.getElementById('arrivantsList');
-  const id = Date.now();
+  const id = ++idCounters.arrivant;
   
   const div = document.createElement('div');
   div.className = 'etat-civil-item';
   div.id = `arrivant-${id}`;
   div.innerHTML = `
     <input type="text" placeholder="Nom(s) et adresse" value="${text}" onchange="updateArrivants()">
-    <button class="btn-remove" onclick="removeArrivant('${id}')">✕</button>
+    <button class="btn-remove" onclick="removeArrivant(${id})">✕</button>
   `;
   
   container.appendChild(div);
@@ -440,7 +448,7 @@ function updateArrivants() {
 // Ajouter un rappel
 function addRappel(titre = '', contenu = '') {
   const container = document.getElementById('rappelsList');
-  const id = Date.now();
+  const id = ++idCounters.rappel;
   
   const div = document.createElement('div');
   div.className = 'rappel-item';
@@ -448,7 +456,7 @@ function addRappel(titre = '', contenu = '') {
   div.innerHTML = `
     <input type="text" placeholder="Titre du rappel" value="${titre}" onchange="updateRappels()">
     <textarea placeholder="Contenu du rappel..." onchange="updateRappels()">${contenu}</textarea>
-    <button class="btn-remove" onclick="removeRappel('${id}')">✕ Supprimer</button>
+    <button class="btn-remove" onclick="removeRappel(${id})">✕ Supprimer</button>
   `;
   
   container.appendChild(div);
