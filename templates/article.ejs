@@ -10,14 +10,8 @@
 <div class="article">
   <h2 class="article-title"><%= article.title %></h2>
 
-  <% if (article.img) { 
-    // Convertir les URLs localhost en chemins relatifs pour l'impression
-    let articleImgSrc = article.img;
-    if (articleImgSrc.includes('localhost:') || articleImgSrc.startsWith('http://localhost') || articleImgSrc.startsWith('https://localhost')) {
-      articleImgSrc = articleImgSrc.replace(/^https?:\/\/localhost:\d+/, '.');
-    }
-  %>
-    <img src="<%= articleImgSrc %>" alt="<%= article.alt %>" class="article-image <%= floatClass %>">
+  <% if (article.img) { %>
+    <img src="<%= article.img %>" alt="<%= article.alt %>" class="article-image <%= floatClass %>">
   <% } %>
 
   <div class="article-text">

@@ -10,14 +10,8 @@
     
     <!-- Main header image -->
     <div class="header-image-container">
-      <% if (headerImage) { 
-        // Convertir les URLs localhost en chemins relatifs pour l'impression
-        let imageSrc = headerImage;
-        if (imageSrc.includes('localhost:') || imageSrc.startsWith('http://localhost') || imageSrc.startsWith('https://localhost')) {
-          imageSrc = imageSrc.replace(/^https?:\/\/localhost:\d+/, '.');
-        }
-      %>
-        <img class="header-image" src="<%= imageSrc %>" alt="<%= headerImageAlt || 'Image principale du bulletin' %>">
+      <% if (headerImage) { %>
+        <img class="header-image" src="<%= headerImage %>" alt="<%= headerImageAlt || 'Image principale du bulletin' %>">
       <% } else { %>
         <img class="header-image" src="https://via.placeholder.com/1200x800?text=Les+Brèves+de+Breux" alt="Image principale du bulletin">
       <% } %>
