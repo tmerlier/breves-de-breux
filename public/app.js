@@ -152,10 +152,14 @@ async function loadFormState() {
       }
       
       // Effacer l'état civil précédent et recharger
+      // (les compteurs d'ID sont remis à zéro puisque le DOM correspondant est vidé)
       document.getElementById('naissancesList').innerHTML = '';
       document.getElementById('decesList').innerHTML = '';
       document.getElementById('arrivantsList').innerHTML = '';
-      
+      idCounters.naissance = 0;
+      idCounters.deces = 0;
+      idCounters.arrivant = 0;
+
       if (formState.config.etatCivil) {
         if (formState.config.etatCivil.naissances) {
           formState.config.etatCivil.naissances.forEach(naissance => {
@@ -176,6 +180,7 @@ async function loadFormState() {
       
       // Effacer et recharger les rappels
       document.getElementById('rappelsList').innerHTML = '';
+      idCounters.rappel = 0;
       if (formState.config.rappels && formState.config.rappels.length > 0) {
         formState.config.rappels.forEach(rappel => {
           addRappel(rappel.titre, rappel.contenu);
