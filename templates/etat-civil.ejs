@@ -14,7 +14,8 @@
   <% if (etatCivil && (
         (etatCivil.naissances && etatCivil.naissances.length) ||
         (etatCivil.deces && etatCivil.deces.length) ||
-        (etatCivil.arrivants && etatCivil.arrivants.length)
+        (etatCivil.arrivants && etatCivil.arrivants.length) ||
+        (etatCivil.mariages && etatCivil.mariages.length)
       )) { %>
 
     <div class="etat-civil-grid">
@@ -49,6 +50,18 @@
           <ul class="etat-civil-list">
             <% etatCivil.arrivants.forEach(item => { %>
               <li><%= item %></li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
+
+      <% if (etatCivil.mariages && etatCivil.mariages.length) { %>
+        <div class="etat-civil-card">
+          <h3 class="etat-civil-category"><span class="etat-civil-icon">💍</span>Mariages</h3>
+          <p class="etat-civil-intro">Nous adressons nos félicitations aux jeunes mariés.</p>
+          <ul class="etat-civil-list">
+            <% etatCivil.mariages.forEach(item => { %>
+              <li><b><%= item.noms %></b><% if (item.date) { %> - <%= formatDateFr(item.date) %><% } %></li>
             <% }); %>
           </ul>
         </div>
