@@ -135,14 +135,10 @@ async function loadFormState() {
     // Restaurer la configuration
     if (formState.config) {
       state.config = formState.config;
-      
-      // Remplir les champs (écrase les valeurs de loadConfig)
-      if (formState.config.startDate) {
-        document.getElementById('startDate').value = convertToInputDate(formState.config.startDate);
-      }
-      if (formState.config.endDate) {
-        document.getElementById('endDate').value = convertToInputDate(formState.config.endDate);
-      }
+
+      // Les dates de période restent pilotées par config.json (source de
+      // vérité) : on ne les écrase volontairement pas depuis form-state, qui
+      // peut contenir un instantané périmé.
       if (formState.config.mainImage) {
         document.getElementById('mainImageUrl').value = formState.config.mainImage;
         updateMainImagePreview();
