@@ -142,6 +142,7 @@ dist
 node_modules/
 
 breves.html
+breves.pdf
 
 config.json
 
