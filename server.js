@@ -5,6 +5,7 @@ const fs = require('fs');
 const multer = require('multer');
 const cors = require('cors');
 const render = require('./lib/render');
+const { generatePdf } = require('./lib/pdf');
 const {
   parseDate,
   formatDate,
@@ -216,14 +217,25 @@ app.post('/api/preview', (req, res) => {
   }
 });
 
-// API: Générer le fichier final
-app.post('/api/generate', (req, res) => {
+// API: Générer le PDF final via Paged.js + Puppeteer
+app.post('/api/generate', async (req, res) => {
   try {
     const { config, selectedArticles } = req.body;
-    const OUTPUT_FILE = path.join(__dirname, 'breves.html');
-    fs.writeFileSync(OUTPUT_FILE, renderBreves(config, selectedArticles), 'utf8');
-    res.json({ success: true, file: OUTPUT_FILE });
+    const htmlPath = path.join(__dirname, 'breves.html');
+    const pdfPath = path.join(__dirname, 'breves.pdf');
+
+    // 1. Écrit la page source (incluant Paged.js), servie en HTTP.
+    fs.writeFileSync(htmlPath, renderBreves(config, selectedArticles), 'utf8');
+
+    // 2. Puppeteer charge cette page servie et imprime le PDF.
+    await generatePdf({
+      url: `http://localhost:${PORT}/breves.html`,
+      outputPath: pdfPath,
+    });
+
+    res.json({ success: true, url: '/breves.pdf' });
   } catch (error) {
+    console.error('Erreur génération PDF:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -259,6 +271,16 @@ app.get('/breves.html', (req, res) => {
       </body>
       </html>
     `);
+  }
+});
+
+// Route pour télécharger le PDF généré
+app.get('/breves.pdf', (req, res) => {
+  const pdfPath = path.join(__dirname, 'breves.pdf');
+  if (fs.existsSync(pdfPath)) {
+    res.sendFile(pdfPath);
+  } else {
+    res.status(404).send('PDF non généré. Cliquez sur « Générer le PDF » d\'abord.');
   }
 });
 
