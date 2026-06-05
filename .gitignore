@@ -154,3 +154,5 @@ form-state.json
 
 # Dossier de travail du skill generer-breve-de-breux (copies d'articles adaptées impression)
 .breve-travail/
+# Uploaded images (runtime data)
+uploads/
