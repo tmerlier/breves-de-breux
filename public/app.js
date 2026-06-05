@@ -63,6 +63,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     </html>
   `);
   doc.close();
+
+  // Rafraîchit la preview à chaque modification du formulaire.
+  document.addEventListener('input', (e) => {
+    if (e.target.closest('#previewFrame')) return; // ignore l'iframe
+    schedulePreviewRefresh();
+  });
+  document.addEventListener('change', (e) => {
+    if (e.target.closest('#previewFrame')) return;
+    schedulePreviewRefresh();
+  });
 });
 
 // Charger la configuration existante
@@ -507,6 +517,13 @@ function getCurrentConfig() {
 // Récupérer les articles sélectionnés
 function getSelectedArticles() {
   return state.articles.filter(article => state.selectedArticleIds.has(article.id));
+}
+
+// Rafraîchissement à chaud de la preview, anti-rebond 600 ms.
+let previewDebounceTimer = null;
+function schedulePreviewRefresh() {
+  clearTimeout(previewDebounceTimer);
+  previewDebounceTimer = setTimeout(() => { updatePreview(); }, 600);
 }
 
 // Actualiser la prévisualisation
