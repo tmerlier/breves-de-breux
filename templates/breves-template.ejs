@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Les Brèves de Breux</title>
   <style>
+    /* Pagination print (Paged.js lit cette règle au niveau racine) */
+    @page {
+      size: A4;
+      margin: 15mm;
+    }
+    /* Sous Paged.js, la marge vient de @page : on retire le padding conteneur. */
+    .pagedjs_page .container,
+    .pagedjs_page .pagedjs_page_content .container {
+      padding: 0;
+      max-width: 100%;
+    }
     /* General styles */
     * {
       box-sizing: border-box;
@@ -420,6 +431,14 @@
       margin-right: 0.5rem;
     }
 
+    /* Blocs atomiques : ne jamais couper en interne (écran + print + Paged.js) */
+    .article,
+    .event-card,
+    .rappel-card,
+    .etat-civil-card {
+      break-inside: avoid;
+    }
+
     /* Print-specific styles */
     @media print {
       body {
@@ -431,11 +450,7 @@
         padding: 0;
         max-width: 100%;
       }
-      
-      .article, .event-card {
-        page-break-inside: avoid;
-      }
-      
+
       .first-page {
         height: 100vh;
       }
@@ -477,35 +492,6 @@
       }
     }
   </style>
-  <script>
-    // Détection intelligente des articles courts vs longs pour éviter les pages blanches
-    function optimizeArticleBreaks() {
-      const articles = document.querySelectorAll('.article');
-      
-      articles.forEach(article => {
-        const articleHeight = article.offsetHeight;
-        
-        // Seuil : si l'article fait moins de ~400px de hauteur, on considère qu'il est "court"
-        // et on évite les coupures. Sinon, on autorise les coupures pour éviter les grandes zones blanches.
-        const heightThreshold = 400;
-        
-        if (articleHeight < heightThreshold) {
-          article.classList.add('short-article');
-        } else {
-          article.classList.add('long-article');
-        }
-      });
-    }
-    
-    // Exécuter au chargement ET avant l'impression
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', optimizeArticleBreaks);
-    } else {
-      optimizeArticleBreaks();
-    }
-    
-    window.addEventListener('beforeprint', optimizeArticleBreaks);
-  </script>
 </head>
 <body>
   <div class="container">
@@ -569,5 +555,12 @@
     </section>
 
   </div>
+  <script>
+    window.PagedConfig = {
+      auto: true,
+      after: () => { window.__PAGEDJS_DONE__ = true; },
+    };
+  </script>
+  <script src="/vendor/pagedjs/paged.polyfill.js"></script>
 </body>
 </html>
