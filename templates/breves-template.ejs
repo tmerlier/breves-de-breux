@@ -41,10 +41,8 @@
     
     /* First page / Header styles */
     .first-page {
-      min-height: 297mm; /* A4 height */
       display: flex;
       flex-direction: column;
-      page-break-after: always;
     }
     
     .newsletter-title {
@@ -431,12 +429,20 @@
       margin-right: 0.5rem;
     }
 
-    /* Blocs atomiques : ne jamais couper en interne (écran + print + Paged.js) */
-    .article,
+    /* Blocs atomiques courts : ne jamais couper en interne. */
     .event-card,
     .rappel-card,
     .etat-civil-card {
       break-inside: avoid;
+    }
+
+    /* Articles : on autorise la coupure sur plusieurs pages pour densifier la
+       mise en page, en évitant les lignes orphelines/veuves. L'image de tête
+       reste insécable (.article-image, déjà défini plus haut). */
+    .article {
+      break-inside: auto;
+      orphans: 3;
+      widows: 3;
     }
 
     /* Print-specific styles */
@@ -451,10 +457,6 @@
         max-width: 100%;
       }
 
-      .first-page {
-        height: 100vh;
-      }
-      
       .calendar-section {
         page-break-before: always;
       }
