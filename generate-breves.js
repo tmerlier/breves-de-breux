@@ -46,11 +46,11 @@ articles = articles.filter(article => article.date >= startDate && article.date 
 // Préparation (suppression des images inline, réécriture des URLs, tri)
 const preparedArticles = render.prepareArticlesForRendering(articles);
 
-// Chargement et filtrage des évènements (ceux qui débutent après la fin de période)
+// Chargement et filtrage des évènements (ceux qui débutent après la date du jour)
 const eventsPath = EVENTS_PATH
   ? (path.isAbsolute(EVENTS_PATH) ? EVENTS_PATH : path.join(__dirname, EVENTS_PATH))
   : '';
-const events = render.loadAndFilterEvents(eventsPath, endDate);
+const events = render.loadAndFilterEvents(eventsPath);
 
 // Construction du contexte et rendu
 const context = render.buildContext(config, preparedArticles, events);

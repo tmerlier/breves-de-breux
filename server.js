@@ -198,8 +198,7 @@ const TEMPLATE_NAME = 'breves-template.ejs';
 // Assemble le contexte de rendu commun aux routes preview et generate.
 function renderBreves(config, selectedArticles) {
   const articles = prepareArticlesForRendering(selectedArticles);
-  const periodEndDate = config.endDate ? parseDate(config.endDate) : new Date();
-  const events = loadAndFilterEvents(resolveEventsPath(), periodEndDate);
+  const events = loadAndFilterEvents(resolveEventsPath());
   const context = buildContext(config, articles, events);
   return renderTemplate(TEMPLATE_DIR, TEMPLATE_NAME, context);
 }
