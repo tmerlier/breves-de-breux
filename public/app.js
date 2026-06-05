@@ -558,69 +558,54 @@ async function updatePreview() {
   }
 }
 
-// Générer le fichier final et ouvrir pour impression
+// Générer le PDF final et déclencher son téléchargement
 async function generateFinal() {
   const loadingIndicator = document.getElementById('loadingIndicator');
-  
+
   try {
-    loadingIndicator.classList.add('active');
-    
     const config = getCurrentConfig();
     const selectedArticles = getSelectedArticles();
-    
+
     if (selectedArticles.length === 0) {
       alert('Veuillez sélectionner au moins un article');
       return;
     }
-    
-    // Ouvrir la fenêtre AVANT la requête async pour éviter le blocage de pop-up
-    const printWindow = window.open('about:blank', '_blank');
-    
-    // Sauvegarder la config
+
+    loadingIndicator.classList.add('active');
+
+    // Sauvegarde config + état du formulaire
     await fetch('/api/config', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(config)
+      body: JSON.stringify(config),
     });
-    
-    // Sauvegarder l'état du formulaire (champs remplis + articles sélectionnés)
-    const formState = {
-      config: config,
-      selectedArticleIds: Array.from(state.selectedArticleIds),
-      timestamp: new Date().toISOString()
-    };
-    
     await fetch('/api/save-form-state', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formState)
+      body: JSON.stringify({
+        config,
+        selectedArticleIds: Array.from(state.selectedArticleIds),
+        timestamp: new Date().toISOString(),
+      }),
     });
-    
-    // Générer le fichier
+
+    // Génère le PDF côté serveur (Paged.js + Puppeteer)
     const response = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ config, selectedArticles })
+      body: JSON.stringify({ config, selectedArticles }),
     });
-    
     const result = await response.json();
-    
+
     if (result.success) {
-      // Rediriger la fenêtre déjà ouverte vers le fichier généré
-      if (printWindow) {
-        printWindow.location.href = '/breves.html';
-        alert('Document généré avec succès ! Une nouvelle fenêtre s\'est ouverte pour l\'impression.');
-      } else {
-        alert('Document généré avec succès !\n\nVeuillez autoriser les pop-ups pour ce site.\nVous pouvez accéder au document via ce lien : ' + window.location.origin + '/breves.html');
-      }
+      // Ouvre le PDF dans un nouvel onglet (cache-busting pour éviter l'ancien)
+      window.open(result.url + '?t=' + Date.now(), '_blank');
     } else {
-      if (printWindow) printWindow.close();
-      alert('Erreur lors de la génération du document');
+      alert('Erreur lors de la génération du PDF : ' + (result.error || 'inconnue'));
     }
-    
   } catch (error) {
     console.error('Erreur génération finale:', error);
-    alert('Erreur lors de la génération du document');
+    alert('Erreur lors de la génération du PDF');
   } finally {
     loadingIndicator.classList.remove('active');
   }
