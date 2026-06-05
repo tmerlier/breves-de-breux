@@ -27,6 +27,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
+// Sert le polyfill Paged.js (pagination print) depuis node_modules
+app.use('/vendor/pagedjs', express.static(path.join(__dirname, 'node_modules/pagedjs/dist')));
 // Montage des images externes du site Breux-sur-Avre si le dossier existe
 const externalImagesPath = path.resolve(__dirname, '../breux-sur-avre/public/images');
 if (fs.existsSync(externalImagesPath)) {
