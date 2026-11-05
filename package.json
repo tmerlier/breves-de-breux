@@ -8,13 +8,13 @@
     "create:article": "echo 'Créez un fichier .md dans le dossier articles/ avec le template suivant :' && cat << 'EOF'\n---\ntitle: \"Titre de l'article\"\ndate: \"MM-DD-YYYY\"\nimg: \"url-image.jpg\"\nalt: \"Description\"\ndraft: false\n---\n\nContenu de l'article...\nEOF"
   },
   "dependencies": {
-    "cors": "^2.8.5",
+    "cors": "^2.8.6",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.18.2",
     "gray-matter": "^4.0.3",
     "multer": "^1.4.5-lts.1",
     "pagedjs": "^0.4.3",
-    "puppeteer": "^25.1.0"
+    "puppeteer": "^25.16.0"
   }
 }
